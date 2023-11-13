@@ -1,0 +1,40 @@
+{
+  "name": "for-mei",
+  "private": true,
+  "version": "0.0.0",
+  "type": "commonjs",
+  "homepage": "./",
+  "main": "./electron/compile-main/index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "electron": "wait-on -t 5000 tcp:5173 && electron .",
+    "compile-main": "tsc ./electron/index.ts --outdir ./electron/compile-main && tsc ./electron/preload.ts --outdir ./electron/compile-main",
+    "electron:dev": "concurrently  \"yarn dev\" \"yarn electron\"",
+    "electron:build": "yarn build && electron-builder"
+  },
+  "dependencies": {
+    "electron-is-dev": "^2.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-react-swc": "^3.3.2",
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "electron": "^27.0.4",
+    "electron-builder": "^24.6.4",
+    "eslint": "^8.45.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5",
+    "wait-on": "^7.1.0"
+  }
+}
