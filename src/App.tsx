@@ -1,35 +1,35 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import styled from "styled-components";
+import "./App.css";
+import { FlexColBox } from "./components/common/FlexBox";
+import { Result } from "./components/TextArea";
+import InputArea from "./components/InputArea";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <AppContainer>
+      <AppInputArea>
+        <InputArea />
+      </AppInputArea>
+      <AppResultArea>
+        <Result />
+      </AppResultArea>
+    </AppContainer>
+  );
 }
 
-export default App
+const AppContainer = styled.div`
+  margin: 0 auto;
+  min-height: 100vh;
+  min-width: 100vw;
+  display: flex;
+`;
+
+const AppInputArea = styled(FlexColBox)`
+  flex-basis: 65%;
+`;
+
+const AppResultArea = styled(FlexColBox)`
+  flex-basis: 35%;
+`;
+
+export default App;

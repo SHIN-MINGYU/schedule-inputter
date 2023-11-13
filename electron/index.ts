@@ -1,8 +1,10 @@
-import { BrowserWindow, app } from "electron";
+import { BrowserWindow, app, ipcMain } from "electron";
 import * as path from "path";
 import * as isDev from "electron-is-dev";
 import { windowOption } from "./config";
 import * as dotenv from "dotenv";
+import * as fs from "fs";
+import { registPresetEventes } from "./event";
 
 dotenv.config();
 
@@ -18,7 +20,6 @@ const createWindow = () => {
     },
   });
   if (isDev) {
-    console.log(process.env.BASE_URL);
     mainWindow.loadURL(process.env.BASE_URL || "http://localhost:5173");
     mainWindow.webContents.openDevTools({ mode: "detach" });
   } else {
@@ -37,3 +38,5 @@ app.whenReady().then(() => {
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
 });
+
+registPresetEventes();

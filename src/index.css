@@ -1,5 +1,11 @@
+@font-face {
+  font-family: ChiikawaFont;
+  src: url("/001Shirokuma-Regular.otf");
+}
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: ChiikawaFont, Inter, system-ui, Avenir, Helvetica, Arial,
+    sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
