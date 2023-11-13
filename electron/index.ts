@@ -2,6 +2,9 @@ import { BrowserWindow, app } from "electron";
 import * as path from "path";
 import * as isDev from "electron-is-dev";
 import { windowOption } from "./config";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -15,10 +18,11 @@ const createWindow = () => {
     },
   });
   if (isDev) {
+    console.log(process.env.BASE_URL);
     mainWindow.loadURL(process.env.BASE_URL || "http://localhost:5173");
     mainWindow.webContents.openDevTools({ mode: "detach" });
   } else {
-    mainWindow.loadFile(path.join(__dirname, "./build/index.html"));
+    mainWindow.loadFile(path.join(__dirname, "../../dist/index.html"));
   }
 };
 
