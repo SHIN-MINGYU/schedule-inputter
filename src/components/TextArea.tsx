@@ -6,7 +6,7 @@ import { Button } from "./common/Button";
 export function Result() {
   return (
     <ResultContainer>
-      <Letter size="lg" style={{ marginLeft: "1rem" }}>
+      <Letter m="0" size="7xl" style={{ marginLeft: "0.5rem" }}>
         出力結果
       </Letter>
       <ResultTextArea></ResultTextArea>
@@ -26,7 +26,7 @@ const ResultContainer = styled(FlexColBox)`
 const ResultTextArea = styled.textarea`
   resize: none;
   flex-basis: 100%;
-  border-radius: 10%;
+  border-radius: 5%;
 `;
 
 const ResultButtonArea = styled(FlexRowBox)`

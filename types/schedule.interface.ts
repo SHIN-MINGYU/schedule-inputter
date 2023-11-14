@@ -4,8 +4,14 @@ export interface IPreset {
   createdAt: Date;
 }
 
-export interface ISchedule {
-  time: number;
-  type: string;
-  people: number;
+export interface ISchedules {
+  [key: string]: { [key: string]: ISchedule };
 }
+
+export interface ISchedule {
+  time: string;
+  type: ILessonType;
+  people: string;
+}
+
+export type ILessonType = "PV" | "GR";
