@@ -4,6 +4,7 @@ type LetterWeight = "thin" | "normal" | "bold";
 interface ILetter {
   size?: LetterSize;
   weight?: LetterWeight;
+  m?: string;
 }
 
 const fontSizeMap = {
@@ -24,5 +25,5 @@ export const Letter = styled.p<ILetter>`
     }`}
 
   font-weight : ${(props: ILetter) => (props.weight ? props.weight : "normal")};
-  margin: 0.5rem;
+  margin: ${(props) => (props.m ? props.m : "0.25rem")};
 `;
