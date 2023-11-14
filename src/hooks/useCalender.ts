@@ -43,6 +43,7 @@ export default function useCalender() {
           value: DATE_OF_MONTH[dayjs().month() - 1] - i,
           backgroundColor: "white",
           color: "#D0D0D0",
+          vaild: false,
         };
       })
       .reverse();
@@ -54,6 +55,7 @@ export default function useCalender() {
         value: i + 1,
         backgroundColor: "white",
         color: idx % 7 === 0 ? "blue" : idx % 7 === 1 ? "red" : "black",
+        vaild: true,
       };
     });
     const tempArr = prevDates.concat(currentDates);
@@ -63,6 +65,7 @@ export default function useCalender() {
         value: i + 1,
         backgroundColor: "white",
         color: "#D0D0D0",
+        vaild: false,
       })
     );
     return tempArr.concat(nextDates);

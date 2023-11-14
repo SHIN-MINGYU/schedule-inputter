@@ -1,11 +1,11 @@
 export interface IPreset {
   title: string;
-  schedules: ISchedule[];
+  schedules: ISchedules;
   createdAt: Date;
 }
 
 export interface ISchedules {
-  [key: string]: { [key: string]: ISchedule };
+  [key: string]: ISchedule;
 }
 
 export interface ISchedule {
@@ -14,4 +14,8 @@ export interface ISchedule {
   people: string;
 }
 
-export type ILessonType = "PV" | "GR";
+export interface IMonthSchdules {
+  [key: string]: ISchedules;
+}
+
+export type ILessonType = "PV" | "GL";

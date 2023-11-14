@@ -1,9 +1,8 @@
-import { BrowserWindow, app, ipcMain } from "electron";
+import { BrowserWindow, app } from "electron";
 import * as path from "path";
 import * as isDev from "electron-is-dev";
 import { windowOption } from "./config";
 import * as dotenv from "dotenv";
-import * as fs from "fs";
 import { registPresetEventes } from "./event";
 
 dotenv.config();
@@ -13,6 +12,7 @@ let mainWindow: BrowserWindow | null = null;
 const createWindow = () => {
   mainWindow = new BrowserWindow({
     ...windowOption,
+    // titleBarStyle: "hidden",
     webPreferences: {
       devTools: isDev,
       nodeIntegration: true,

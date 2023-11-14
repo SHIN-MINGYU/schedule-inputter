@@ -1,24 +1,25 @@
 import styled from "styled-components";
-import { FlexColBox, FlexRowBox } from "../common/FlexBox";
+import { FlexRowBox } from "../common/FlexBox";
 import { Letter } from "../common/TypoGraphy";
 import day_of_a_week from "../../utils/json/day-of-a-week.json";
-import { useContext, useMemo } from "react";
-import dayjs from "dayjs";
+import { Dispatch, SetStateAction, useContext } from "react";
 import useCalender from "../../hooks/useCalender";
 import { ICalenderDate } from "../../../types/calender.interface";
-import { InputAreaContext } from ".";
 import { Button } from "../common/Button";
+import dayjs from "dayjs";
+import { AppContext } from "../../App";
 
-export default function ScheduleCalender() {
-  const { DATE_OF_MONTH, calenderDates } = useCalender();
-  const { setMode } = useContext(InputAreaContext);
-  const startDay = useMemo(() => dayjs().set("date", 1).day(), []);
+interface IProps {
+  setDate: Dispatch<SetStateAction<string>>;
+}
+
+export default function ScheduleCalender({ setDate }: IProps) {
+  const { calenderDates } = useCalender();
+  const { setMode } = useContext(AppContext);
   return (
     <ScheduleCalenderContainer>
       <ScheduleCalenderHeader>
-        <Letter size="7xl" weight="bold" style={{ height: "10%" }}>
-          1月
-        </Letter>
+        <Letter size="7xl">{dayjs().month() + 1}月</Letter>
         <PresetContainer>
           <PresetArea>
             {/* {presetList.map((title) => (
@@ -41,14 +42,20 @@ export default function ScheduleCalender() {
         ))}
         {calenderDates.map((el: ICalenderDate) => (
           <ScheduleCalenderDay
-            onClick={() => setMode("schedule")}
+            onClick={() => {
+              if (!el.vaild) return;
+              setMode("schedule");
+              setDate(
+                String(dayjs().month() + 1) + "月" + String(el.value) + "日"
+              );
+            }}
             style={{
               margin: "0.125rem",
               textAlign: "start",
               backgroundColor: el.backgroundColor,
               borderRadius: "10%",
               color: el.color,
-              cursor: "pointer",
+              cursor: el.vaild ? "pointer" : "auto",
             }}
           >
             <Letter size={"xs"} m={"0.125rem"} style={{}}>
@@ -98,4 +105,4 @@ const PresetArea = styled(FlexRowBox)`
   padding: 0.75rem;
 `;
 
-const PresetButton = styled(Button)``;
+// const PresetButton = styled(Button)``;

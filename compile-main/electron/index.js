@@ -20,7 +20,9 @@ var event_1 = require("./event");
 dotenv.config();
 var mainWindow = null;
 var createWindow = function () {
-    mainWindow = new electron_1.BrowserWindow(__assign(__assign({}, config_1.windowOption), { webPreferences: {
+    mainWindow = new electron_1.BrowserWindow(__assign(__assign({}, config_1.windowOption), { 
+        // titleBarStyle: "hidden",
+        webPreferences: {
             devTools: isDev,
             nodeIntegration: true,
             preload: path.join(__dirname, "preload.js"),
