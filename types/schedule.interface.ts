@@ -1,7 +1,9 @@
+import { Dayjs } from "dayjs";
+
 export interface IPreset {
   title: string;
   schedules: ISchedules;
-  createdAt: Date;
+  createdAt: Dayjs;
 }
 
 export interface ISchedules {

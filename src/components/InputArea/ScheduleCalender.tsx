@@ -25,8 +25,16 @@ export default function ScheduleCalender({ setDate }: IProps) {
             {/* {presetList.map((title) => (
           <PresetButton>{title}</PresetButton>
         ))} */}
-            <Button style={{ padding: "0.25rem 0.75rem", margin: 0 }}>
-              추가
+            <Button
+              onClick={() =>
+                setMode((prev) => ({
+                  ...prev,
+                  ...{ right: prev.right === "preset" ? "result" : "preset" },
+                }))
+              }
+              style={{ padding: "0.25rem 0.75rem", margin: 0 }}
+            >
+              プリセット
             </Button>
           </PresetArea>
         </PresetContainer>
@@ -44,7 +52,7 @@ export default function ScheduleCalender({ setDate }: IProps) {
           <ScheduleCalenderDay
             onClick={() => {
               if (!el.vaild) return;
-              setMode("schedule");
+              setMode((prev) => ({ ...prev, ...{ left: "schedule" } }));
               setDate(
                 String(dayjs().month() + 1) + "月" + String(el.value) + "日"
               );

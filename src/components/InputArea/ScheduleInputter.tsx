@@ -12,37 +12,44 @@ import { Letter } from "../common/TypoGraphy";
 import {
   ILessonType,
   IMonthSchdules,
+  IPreset,
   ISchedules,
 } from "../../../types/schedule.interface";
 import useInput from "../../hooks/useInput";
-import useEvent from "../../hooks/useEvent";
 import { AppContext } from "../../App";
-
+import Modal from "../common/Modal";
+import { Button } from "../common/Button";
+import dayjs from "dayjs";
 interface IProps {
   date: string;
 }
 
 export default function ScheduleInputter({ date }: IProps) {
-  const { setMode } = useContext(AppContext);
+  const { mode, setMode } = useContext(AppContext);
   const { setMonthSchedules } = useContext(AppContext);
-  const { publish } = useEvent();
-
+  const [visible, setVisible] = useState(false);
+  const hide = () => {
+    setVisible(false);
+  };
   const [schedules, setSchedules] = useState<ISchedules>({});
-
   useEffect(() => {
     return () => {
-      setMonthSchedules((prev: IMonthSchdules) => {
-        const newObj: any = {};
-        newObj[date] = schedules;
-        return { ...prev, ...newObj };
-      });
+      mode.left != "preset" &&
+        setMonthSchedules((prev: IMonthSchdules) => {
+          const newObj: any = {};
+          newObj[date] = schedules;
+          return { ...prev, ...newObj };
+        });
     };
   }, [schedules]);
 
   return (
     <>
+      {visible && <PresetModal schedules={schedules} hide={hide}></PresetModal>}
       <ScheduleInputterHeader>
-        <Letter size="7xl">{date}</Letter>
+        <Letter size="7xl">
+          {mode.left === "preset" ? "NEW PRESET" : date}
+        </Letter>
       </ScheduleInputterHeader>
 
       <ScheduleInputterTheme>
@@ -68,14 +75,20 @@ export default function ScheduleInputter({ date }: IProps) {
       </ScheduleContainer>
       <button
         onClick={() => {
-          for (let i = 0; i < 12; i++) {
-            publish("saveSchedulesData" + String(i));
-          }
-          setMode("calender");
+          setMode((prev) => ({ ...prev, ...{ left: "calender" } }));
         }}
       >
         돌아가기
       </button>
+
+      {mode.left === "preset" && (
+        <button
+          style={{ border: "1px solid blue" }}
+          onClick={() => setVisible(true)}
+        >
+          저장
+        </button>
+      )}
     </>
   );
 }
@@ -197,10 +210,88 @@ const Schedule = ({
   );
 };
 
+const PresetModal = ({
+  hide,
+  schedules,
+}: {
+  hide: () => void;
+  schedules: ISchedules;
+}) => {
+  const { setMode, setIsPresetPending } = useContext(AppContext);
+  const [isCreated, setIsCreated] = useState<boolean>();
+  const title = useInput("");
+  const onSubmitPreset = () => {
+    if (!title.value) {
+      return;
+    }
+
+    const preset: IPreset = {
+      title: title.value,
+      schedules,
+      createdAt: dayjs(),
+    };
+
+    const isUploaded = window.api.createPreset(JSON.stringify(preset));
+    setIsCreated(isUploaded);
+    if (isUploaded) {
+      hide();
+      setMode((prev) => ({
+        ...prev,
+        ...{ left: "calender", right: "result" },
+      }));
+      setIsPresetPending(true);
+    } else {
+      console.log("no~~");
+    }
+  };
+
+  return (
+    <Modal hide={hide} qs="#root">
+      <Modal.Header>
+        <Letter>タイトルを入力するってこと…？</Letter>
+        <Letter
+          style={{ cursor: "pointer" }}
+          onClick={hide}
+          size="lg"
+          color="red"
+        >
+          X
+        </Letter>
+      </Modal.Header>
+      <Modal.Body>
+        <input
+          {...title}
+          style={{ height: "1.5rem" }}
+          placeholder="タイトル"
+        ></input>
+        {typeof isCreated != "undefined" && !isCreated && (
+          <Letter size="xs" color="red">
+            同じファイルが存在するってこと？
+          </Letter>
+        )}
+      </Modal.Body>
+      <Modal.Footer>
+        <Button
+          onClick={onSubmitPreset}
+          style={{ padding: 0, height: "fit-content", width: "80px" }}
+        >
+          <Letter size="xs">Save</Letter>
+        </Button>
+        <Button
+          onClick={hide}
+          style={{ padding: 0, height: "fit-content", width: "80px" }}
+        >
+          <Letter size="xs">Cancle</Letter>
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+};
+
 const ScheduleInputterHeader = styled(FlexRowBox)`
-  justify-content: space-between;
   width: 100%;
   height: 10%;
+  align-items: center;
 `;
 
 const ScheduleInputterTheme = styled.div`

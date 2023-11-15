@@ -1,15 +1,26 @@
 import * as fs from "fs";
-import { app, ipcMain, ipcRenderer } from "electron";
+import { BrowserWindow, app, dialog, ipcMain, ipcRenderer } from "electron";
 import type { IPreset } from "../types/schedule.interface";
 
 export const registPresetEventes = () => {
-  ipcMain.on("createPreset", (_, preset: string) => {
+  ipcMain.on("createPreset", (e, preset: string) => {
     const presetJson = JSON.parse(preset);
+
+    if (
+      fs.existsSync(
+        app.getPath("userData") + `/presets/${presetJson.title}.json`
+      )
+    ) {
+      e.returnValue = false;
+      return false;
+    }
     fs.writeFileSync(
       app.getPath("userData") + `/presets/${presetJson.title}.json`,
       preset,
       "utf8"
     );
+    e.returnValue = true;
+    return true;
   });
 
   ipcMain.on("updatePreset", (_, args) => {
@@ -35,5 +46,11 @@ export const registPresetEventes = () => {
       app.getPath("userData") + `/presets/${title}.json`
     );
     getPreset(file.toJSON());
+  });
+};
+
+export const registDialogEvent = (mainWindow: BrowserWindow) => {
+  ipcMain.on("showDialog", (e, message) => {
+    dialog.showMessageBox(mainWindow, { message });
   });
 };

@@ -47,3 +47,4 @@ electron_1.app.on("window-all-closed", function () {
         electron_1.app.quit();
 });
 (0, event_1.registPresetEventes)();
+(0, event_1.registDialogEvent)(mainWindow);

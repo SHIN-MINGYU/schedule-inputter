@@ -8,10 +8,18 @@ import type { IPreset } from "../types/schedule.interface";
 // });
 
 contextBridge.exposeInMainWorld("api", {
-  createPreset: (preset: string) => ipcRenderer.send("createPreset", preset),
+  createPreset: (preset: string) => {
+    return ipcRenderer.sendSync("createPreset", preset);
+  },
   updatePreset: (preset: string) => ipcRenderer.send("updatePreset", preset),
   deletePreset: (title: string) => ipcRenderer.send("deletePreset", title),
-  loadPresetList: () => ipcRenderer.send("loadPresetList"),
+  loadPresetList: () => ipcRenderer.sendSync("loadPresetList"),
   readPreset: ([title, getPreset]) =>
     ipcRenderer.send("readPreset", [title, getPreset]),
+});
+
+contextBridge.exposeInMainWorld("dialog", {
+  showDialog: (message: string) => {
+    ipcRenderer.send("showDialog", message);
+  },
 });

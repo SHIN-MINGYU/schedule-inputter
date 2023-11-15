@@ -3,7 +3,7 @@ import * as path from "path";
 import * as isDev from "electron-is-dev";
 import { windowOption } from "./config";
 import * as dotenv from "dotenv";
-import { registPresetEventes } from "./event";
+import { registDialogEvent, registPresetEventes } from "./event";
 
 dotenv.config();
 
@@ -40,3 +40,4 @@ app.on("window-all-closed", () => {
 });
 
 registPresetEventes();
+registDialogEvent(mainWindow!);

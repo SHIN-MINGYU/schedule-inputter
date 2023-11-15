@@ -13,24 +13,32 @@ import {
 } from "react";
 import { IMonthSchdules } from "../types/schedule.interface";
 import { Button } from "./components/common/Button";
-import usePreset from "./hooks/usePreset";
-import { Letter } from "./components/common/TypoGraphy";
+import type { IMode } from "../types/common.interface";
+import PresetArea from "./components/PresetArea";
 
 export const AppContext = createContext<{
   monthSchedules: IMonthSchdules;
   setMonthSchedules: Dispatch<SetStateAction<IMonthSchdules>>;
-  mode: string;
-  setMode: Dispatch<SetStateAction<string>>;
+  mode: IMode;
+  setMode: Dispatch<SetStateAction<IMode>>;
+  isPresetPending: boolean;
+  setIsPresetPending: Dispatch<SetStateAction<boolean>>;
 }>({
   monthSchedules: {},
   setMonthSchedules: () => {},
-  mode: "default",
+  mode: { left: "calender", right: "result" },
   setMode: () => {},
+  isPresetPending: false,
+  setIsPresetPending: () => {},
 });
 
 function App() {
-  const [mode, setMode] = useState("default");
+  const [mode, setMode] = useState<IMode>({
+    left: "calender",
+    right: "result",
+  });
   const [monthSchedules, setMonthSchedules] = useState<IMonthSchdules>({});
+  const [isPresetPending, setIsPresetPending] = useState<boolean>(false);
   const taRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {}, []);
@@ -93,7 +101,14 @@ function App() {
   }, [monthSchedules]);
   return (
     <AppContext.Provider
-      value={{ monthSchedules, setMonthSchedules, mode, setMode }}
+      value={{
+        monthSchedules,
+        setMonthSchedules,
+        mode,
+        setMode,
+        isPresetPending,
+        setIsPresetPending,
+      }}
     >
       {/* <AppTitleBar>
         <div>
@@ -102,10 +117,10 @@ function App() {
         <div>button</div>
       </AppTitleBar> */}
       <AppContainer>
-        <AppInputArea>
+        <AppInputArea mode={mode}>
           <InputArea />
         </AppInputArea>
-        {mode != "schedule" && (
+        {mode.left != "schedule" && mode.right === "result" && (
           <div
             style={{
               width: "5%",
@@ -123,7 +138,8 @@ function App() {
         )}
 
         <AppResultArea mode={mode}>
-          <Result _ref={taRef} />
+          {mode.right === "result" && <Result _ref={taRef} />}
+          {mode.right === "preset" && <PresetArea />}
         </AppResultArea>
       </AppContainer>
     </AppContext.Provider>
@@ -147,10 +163,11 @@ const AppContainer = styled.div`
   padding: 1rem;
 `;
 
-const AppInputArea = styled(FlexColBox)<{ mode: string }>`
-  width: ${(props) => (props.mode != "schedule" ? "70%" : "62.5")};
+const AppInputArea = styled(FlexColBox)<{ mode: IMode }>`
+  width: ${(props) => (props.mode.left != "schedule" ? "67.5%" : "72.5%")};
 `;
 
-const AppResultArea = styled(FlexColBox)<{ mode: string }>`
-  width: ${(props) => (props.mode != "schedule" ? "32.5%" : "30%")};
+const AppResultArea = styled(FlexColBox)<{ mode: IMode }>`
+  width: ${(props) => (props.mode.left != "schedule" ? "27.5%" : "27.5%")};
+  padding: 1rem;
 `;

@@ -13,6 +13,7 @@ export function Result({ _ref }: { _ref: RefObject<HTMLTextAreaElement> }) {
       <ResultTextArea ref={_ref} readOnly></ResultTextArea>
       <ResultButtonArea>
         <Button
+          mt="0.5rem"
           onClick={() => {
             navigator.clipboard.writeText(_ref.current!.value);
           }}
@@ -20,6 +21,7 @@ export function Result({ _ref }: { _ref: RefObject<HTMLTextAreaElement> }) {
           コピー
         </Button>
         <Button
+          mt="0.5rem"
           onClick={() => {
             _ref.current!.value = "";
           }}
@@ -32,7 +34,6 @@ export function Result({ _ref }: { _ref: RefObject<HTMLTextAreaElement> }) {
 }
 
 const ResultContainer = styled(FlexColBox)`
-  padding: 1rem;
   flex-basis: 100%;
 `;
 

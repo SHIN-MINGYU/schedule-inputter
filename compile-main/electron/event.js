@@ -1,12 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.registPresetEventes = void 0;
+exports.registDialogEvent = exports.registPresetEventes = void 0;
 var fs = require("fs");
 var electron_1 = require("electron");
 var registPresetEventes = function () {
-    electron_1.ipcMain.on("createPreset", function (_, preset) {
+    electron_1.ipcMain.on("createPreset", function (e, preset) {
         var presetJson = JSON.parse(preset);
+        if (fs.existsSync(electron_1.app.getPath("userData") + "/presets/".concat(presetJson.title, ".json"))) {
+            e.returnValue = false;
+            return false;
+        }
         fs.writeFileSync(electron_1.app.getPath("userData") + "/presets/".concat(presetJson.title, ".json"), preset, "utf8");
+        e.returnValue = true;
+        return true;
     });
     electron_1.ipcMain.on("updatePreset", function (_, args) {
         fs.writeFileSync(electron_1.app.getPath("userData") + "/hi.txt", "asdfasdfasdfasf");
@@ -31,3 +37,9 @@ var registPresetEventes = function () {
     });
 };
 exports.registPresetEventes = registPresetEventes;
+var registDialogEvent = function (mainWindow) {
+    electron_1.ipcMain.on("showDialog", function (e, message) {
+        electron_1.dialog.showMessageBox(mainWindow, { message: message });
+    });
+};
+exports.registDialogEvent = registDialogEvent;

@@ -11,12 +11,12 @@ export default function InputArea() {
 
   return (
     <>
-      {mode != "schedule" && (
+      {mode.left === "calender" && (
         <ScheduleCalenderArea>
           <ScheduleCalender setDate={setDate}></ScheduleCalender>
         </ScheduleCalenderArea>
       )}
-      {mode === "schedule" && (
+      {(mode.left === "schedule" || mode.left === "preset") && (
         <ScheduleArea>
           <ScheduleInputter date={date}></ScheduleInputter>
         </ScheduleArea>
