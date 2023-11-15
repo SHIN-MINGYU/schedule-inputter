@@ -16,6 +16,7 @@
     "electron:build": "yarn build && electron-builder"
   },
   "dependencies": {
+    "@electron/remote": "^2.1.0",
     "dayjs": "^1.11.10",
     "dotenv": "^16.3.1",
     "electron-is-dev": "^2.0.0",
