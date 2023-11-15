@@ -1,5 +1,4 @@
-import { contextBridge, ipcMain, ipcRenderer } from "electron";
-import type { IPreset } from "../types/schedule.interface";
+import { contextBridge, ipcRenderer } from "electron";
 
 // contextBridge.exposeInMainWorld("versions", {
 //   node: () => process.versions.node,

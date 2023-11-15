@@ -17,8 +17,13 @@ var registPresetEventes = function () {
     electron_1.ipcMain.on("updatePreset", function (_, args) {
         fs.writeFileSync(electron_1.app.getPath("userData") + "/hi.txt", "asdfasdfasdfasf");
     });
-    electron_1.ipcMain.on("deletePreset", function (_, title) {
+    electron_1.ipcMain.on("deletePreset", function (e, title) {
+        if (!fs.existsSync(electron_1.app.getPath("userData") + "/presets/".concat(title, ".json"))) {
+            e.returnValue = false;
+            return;
+        }
         fs.unlinkSync(electron_1.app.getPath("userData") + "/presets/".concat(title, ".json"));
+        e.returnValue = true;
     });
     electron_1.ipcMain.on("loadPresetList", function (e, _) {
         try {

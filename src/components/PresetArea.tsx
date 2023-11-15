@@ -10,6 +10,7 @@ export default function PresetArea() {
     useContext(AppContext);
   const [preset, setPreset] = useState<string[]>([]);
   const [currentPreset, setCurrentPreset] = useState<string>("");
+  const [isDeleteMode, setIsDeleteMode] = useState<boolean>(false);
   useEffect(() => {
     setIsPresetPending(true);
   }, []);
@@ -21,6 +22,11 @@ export default function PresetArea() {
       setIsPresetPending(false);
     }
   }, [isPresetPending]);
+
+  useEffect(() => {
+    if (isDeleteMode) setCurrentPreset("");
+  }, [isDeleteMode]);
+
   return (
     <>
       <FlexRowBox>
@@ -32,9 +38,30 @@ export default function PresetArea() {
         >
           New
         </Button>
-        <Button style={{ width: "100%" }} mb="0.25rem" ml="0.25rem">
-          削除
-        </Button>
+        {!isDeleteMode && (
+          <Button
+            onClick={() => {
+              setIsDeleteMode(true);
+            }}
+            style={{ width: "100%" }}
+            mb="0.25rem"
+            ml="0.25rem"
+          >
+            削除
+          </Button>
+        )}
+        {isDeleteMode && (
+          <Button
+            onClick={() => {
+              setIsDeleteMode(false);
+            }}
+            style={{ width: "100%" }}
+            mb="0.25rem"
+            ml="0.25rem"
+          >
+            削除解除
+          </Button>
+        )}
       </FlexRowBox>
 
       <RowDivider />
@@ -45,7 +72,10 @@ export default function PresetArea() {
           <Button
             style={{ width: "100%" }}
             color={name === currentPreset ? "pink" : "black"}
-            onClick={() => setCurrentPreset(name)}
+            onClick={() => {
+              !isDeleteMode && setCurrentPreset(name);
+              isDeleteMode && window.api.deletePreset(name);
+            }}
             mt="0.25rem"
           >
             {name}

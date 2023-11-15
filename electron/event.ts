@@ -27,8 +27,13 @@ export const registPresetEventes = () => {
     fs.writeFileSync(app.getPath("userData") + "/hi.txt", "asdfasdfasdfasf");
   });
 
-  ipcMain.on("deletePreset", (_, title) => {
+  ipcMain.on("deletePreset", (e, title) => {
+    if (!fs.existsSync(app.getPath("userData") + `/presets/${title}.json`)) {
+      e.returnValue = false;
+      return;
+    }
     fs.unlinkSync(app.getPath("userData") + `/presets/${title}.json`);
+    e.returnValue = true;
   });
 
   ipcMain.on("loadPresetList", (e, _) => {
