@@ -6,10 +6,14 @@ import { Letter } from "./common/TypoGraphy";
 import { FlexRowBox } from "./common/FlexBox";
 
 export default function PresetArea() {
-  const { setMode, setIsPresetPending, isPresetPending } =
-    useContext(AppContext);
+  const {
+    setMode,
+    setIsPresetPending,
+    isPresetPending,
+    currentPreset,
+    setCurrentPreset,
+  } = useContext(AppContext);
   const [preset, setPreset] = useState<string[]>([]);
-  const [currentPreset, setCurrentPreset] = useState<string>("");
   const [isDeleteMode, setIsDeleteMode] = useState<boolean>(false);
   useEffect(() => {
     setIsPresetPending(true);
@@ -26,6 +30,11 @@ export default function PresetArea() {
   useEffect(() => {
     if (isDeleteMode) setCurrentPreset("");
   }, [isDeleteMode]);
+
+  const deletePreset = (name: string) => {
+    window.api.deletePreset(name);
+    setIsPresetPending(true);
+  };
 
   return (
     <>
@@ -58,8 +67,9 @@ export default function PresetArea() {
             style={{ width: "100%" }}
             mb="0.25rem"
             ml="0.25rem"
+            color="red"
           >
-            削除解除
+            X
           </Button>
         )}
       </FlexRowBox>
@@ -74,7 +84,7 @@ export default function PresetArea() {
             color={name === currentPreset ? "pink" : "black"}
             onClick={() => {
               !isDeleteMode && setCurrentPreset(name);
-              isDeleteMode && window.api.deletePreset(name);
+              isDeleteMode && deletePreset(name);
             }}
             mt="0.25rem"
           >

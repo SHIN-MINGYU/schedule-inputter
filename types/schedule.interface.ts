@@ -14,6 +14,7 @@ export interface ISchedule {
   time: string;
   type: ILessonType;
   people: string;
+  preset?: boolean;
 }
 
 export interface IMonthSchdules {

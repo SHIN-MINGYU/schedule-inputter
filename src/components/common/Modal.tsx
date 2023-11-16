@@ -65,6 +65,7 @@ const ModalMain = styled.div`
   max-height: 36rem;
   padding: 0.5rem 1rem;
   background-color: white;
-  border: 1px solid black;
+  border: 1px solid #d9d9d9;
+  border-radius: 1rem;
 `;
 //className="scrollbar-none flex max-h-[36rem] min-h-fit w-full flex-col space-y-4 overflow-auto  border bg-white p-6 lg:max-w-md"

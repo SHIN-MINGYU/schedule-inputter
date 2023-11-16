@@ -3,7 +3,12 @@ import * as path from "path";
 import * as isDev from "electron-is-dev";
 import { windowOption } from "./config";
 import * as dotenv from "dotenv";
-import { registDialogEvent, registPresetEventes } from "./event";
+import {
+  registDialogEvent,
+  registPresetEventes,
+  registSaveEvent,
+  registWindowsEvent,
+} from "./event";
 
 dotenv.config();
 
@@ -12,7 +17,8 @@ let mainWindow: BrowserWindow | null = null;
 const createWindow = () => {
   mainWindow = new BrowserWindow({
     ...windowOption,
-    // titleBarStyle: "hidden",
+    titleBarStyle: "hidden",
+    maximizable: false,
     webPreferences: {
       devTools: isDev,
       nodeIntegration: true,
@@ -25,6 +31,11 @@ const createWindow = () => {
   } else {
     mainWindow.loadFile(path.join(__dirname, "../../dist/index.html"));
   }
+
+  registPresetEventes();
+  registDialogEvent(mainWindow);
+  registWindowsEvent(mainWindow);
+  registSaveEvent();
 };
 
 app.whenReady().then(() => {
@@ -38,6 +49,3 @@ app.whenReady().then(() => {
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
 });
-
-registPresetEventes();
-registDialogEvent(mainWindow!);

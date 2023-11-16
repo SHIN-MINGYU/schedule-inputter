@@ -15,7 +15,10 @@ import { IMonthSchdules } from "../types/schedule.interface";
 import { Button } from "./components/common/Button";
 import type { IMode } from "../types/common.interface";
 import PresetArea from "./components/PresetArea";
-
+import "./utils/string.extention";
+import { Letter } from "./components/common/TypoGraphy";
+import useSchedule from "./hooks/useSchedule";
+import useInterval from "./hooks/useHook";
 export const AppContext = createContext<{
   monthSchedules: IMonthSchdules;
   setMonthSchedules: Dispatch<SetStateAction<IMonthSchdules>>;
@@ -23,6 +26,8 @@ export const AppContext = createContext<{
   setMode: Dispatch<SetStateAction<IMode>>;
   isPresetPending: boolean;
   setIsPresetPending: Dispatch<SetStateAction<boolean>>;
+  currentPreset: string;
+  setCurrentPreset: Dispatch<SetStateAction<string>>;
 }>({
   monthSchedules: {},
   setMonthSchedules: () => {},
@@ -30,6 +35,8 @@ export const AppContext = createContext<{
   setMode: () => {},
   isPresetPending: false,
   setIsPresetPending: () => {},
+  currentPreset: "",
+  setCurrentPreset: () => {},
 });
 
 function App() {
@@ -37,66 +44,21 @@ function App() {
     left: "calender",
     right: "result",
   });
+  const [currentPreset, setCurrentPreset] = useState<string>("");
   const [monthSchedules, setMonthSchedules] = useState<IMonthSchdules>({});
   const [isPresetPending, setIsPresetPending] = useState<boolean>(false);
   const taRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {}, []);
-
-  const scheduleToText = () => {
-    let str = "";
-    let temp = "";
-    Object.keys(monthSchedules).map((monthDate: string) => {
-      temp += monthDate.split("月")[1];
-      let i = 0;
-      Object.keys(monthSchedules[monthDate]).map((hour: string) => {
-        if (Object.keys(monthSchedules[monthDate][hour]).length != 0) {
-          const s = monthSchedules[monthDate][hour];
-          let people = s.people;
-          if (s.time.length === 1) s.time = "0" + s.time;
-          if (s.people != "満席") people = s.people + "名";
-          if (i != 0) temp += "   ";
-          let timeBlank = "   ";
-          if (hour === "9") {
-            timeBlank += " ";
-            if (i != 0) timeBlank += "    ";
-          }
-
-          let nichiBlank = "   ";
-          if (Object.keys(monthSchedules[monthDate])[0] === "9" && i != 0) {
-            nichiBlank += "   ";
-          }
-          if (Object.keys(monthSchedules[monthDate])[0] === "10" && i != 0) {
-            nichiBlank += "    ";
-          }
-          if (monthDate.split("月")[1].length === 2) {
-            nichiBlank += " ";
-          }
-          if (monthDate.split("月")[1].length === 3)
-            if (i != 0) nichiBlank += " ";
-
-          temp +=
-            nichiBlank +
-            hour +
-            ":" +
-            s.time +
-            timeBlank +
-            s.type +
-            "    " +
-            people +
-            "\n";
-          i++;
-        }
-      });
-      i = 0;
-      if (temp === monthDate.split("月")[1]) temp = "";
-      str += temp;
-      temp = "";
-    });
-    taRef.current!.value = str;
-  };
+  const { scheduleToText, saveMonthSchedule, loadMonthSchedule } =
+    useSchedule();
 
   useEffect(() => {
+    const schedule = loadMonthSchedule();
+    schedule && setMonthSchedules(() => ({ ...JSON.parse(schedule) }));
+  }, []);
+
+  useEffect(() => {
+    saveMonthSchedule(monthSchedules);
+
     console.log("result : ", monthSchedules);
   }, [monthSchedules]);
   return (
@@ -108,34 +70,53 @@ function App() {
         setMode,
         isPresetPending,
         setIsPresetPending,
+        currentPreset,
+        setCurrentPreset,
       }}
     >
-      {/* <AppTitleBar>
-        <div>
-          <Letter>title</Letter>
-        </div>
-        <div>button</div>
-      </AppTitleBar> */}
+      <AppTitleBar>
+        <AppTitleBarWrapper>
+          <AppTitle>
+            <Letter
+              style={{ letterSpacing: "-3px", padding: "1px 2px" }}
+              color="#EF5390"
+              size="lg"
+            >
+              芽生のスケジュール作成アプリ
+            </Letter>
+          </AppTitle>
+          <AppTitleBarButtonWraper>
+            <img
+              onClick={window.electron.minimalizeWindow}
+              src="/pc_minimalize.png"
+            ></img>
+            <img onClick={window.electron.closeWindow} src="/pc_exit.png"></img>
+          </AppTitleBarButtonWraper>
+        </AppTitleBarWrapper>
+      </AppTitleBar>
       <AppContainer>
         <AppInputArea mode={mode}>
           <InputArea />
         </AppInputArea>
-        {mode.left != "schedule" && mode.right === "result" && (
-          <div
-            style={{
-              width: "5%",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
+
+        <div
+          style={{
+            width: "5%",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          {mode.left != "schedule" && mode.right === "result" && (
             <Button
-              onClick={scheduleToText}
+              onClick={() => {
+                scheduleToText(monthSchedules, taRef);
+              }}
               style={{ height: "2rem", lineHeight: "0px" }}
             >
               →
             </Button>
-          </div>
-        )}
+          )}
+        </div>
 
         <AppResultArea mode={mode}>
           {mode.right === "result" && <Result _ref={taRef} />}
@@ -149,22 +130,34 @@ function App() {
 export default App;
 
 const AppTitleBar = styled(FlexRowBox)`
-  height: 64px;
+  height: 32px;
   min-width: 100vw;
-  background-color: pink;
-  justify-content: space-between;
+  background-color: #ffb0cf;
+`;
+const AppTitleBarWrapper = styled(FlexRowBox)`
+  width: 100%;
+`;
+const AppTitle = styled.div`
+  margin-left: 0.5rem;
+  width: 100%;
+  -webkit-app-region: drag;
+`;
+
+const AppTitleBarButtonWraper = styled(FlexRowBox)`
+  cursor: pointer;
+  margin-right: 0.5rem;
 `;
 
 const AppContainer = styled.div`
   margin: 0 auto;
-  min-height: calc(100vh - 2rem);
+  min-height: calc(100vh - 2rem - 32px);
   min-width: calc(100vw - 2rem);
   display: flex;
   padding: 1rem;
 `;
 
 const AppInputArea = styled(FlexColBox)<{ mode: IMode }>`
-  width: ${(props) => (props.mode.left != "schedule" ? "67.5%" : "72.5%")};
+  width: 67.5%;
 `;
 
 const AppResultArea = styled(FlexColBox)<{ mode: IMode }>`

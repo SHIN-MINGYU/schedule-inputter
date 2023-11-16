@@ -31,7 +31,9 @@ export default function ScheduleInputter({ date }: IProps) {
   const hide = () => {
     setVisible(false);
   };
+
   const [schedules, setSchedules] = useState<ISchedules>({});
+
   useEffect(() => {
     return () => {
       mode.left != "preset" &&
@@ -122,7 +124,9 @@ const Schedule = ({
   useEffect(() => {
     setSchedules((prev: ISchedules) => {
       const newObj: any = {};
-      newObj[String(time)] = {};
+      newObj[String(time)] = {
+        preset: false,
+      };
 
       return { ...prev, ...newObj };
     });
@@ -224,10 +228,18 @@ const PresetModal = ({
     if (!title.value) {
       return;
     }
-
+    const presetSchedules: any = {};
+    Object.keys(schedules).forEach((el) => {
+      if (Object.keys(schedules[el]).length != 0) {
+        presetSchedules[el] = {
+          ...schedules[el],
+          ...{ preset: true },
+        };
+      }
+    });
     const preset: IPreset = {
       title: title.value,
-      schedules,
+      schedules: presetSchedules,
       createdAt: dayjs(),
     };
 

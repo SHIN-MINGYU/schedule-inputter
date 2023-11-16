@@ -2,24 +2,35 @@ import styled from "styled-components";
 import { FlexRowBox } from "../common/FlexBox";
 import { Letter } from "../common/TypoGraphy";
 import day_of_a_week from "../../utils/json/day-of-a-week.json";
-import { Dispatch, SetStateAction, useContext } from "react";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
 import useCalender from "../../hooks/useCalender";
 import { ICalenderDate } from "../../../types/calender.interface";
 import { Button } from "../common/Button";
-import dayjs from "dayjs";
 import { AppContext } from "../../App";
+import Modal from "../common/Modal";
 
 interface IProps {
   setDate: Dispatch<SetStateAction<string>>;
+  date: string;
 }
 
-export default function ScheduleCalender({ setDate }: IProps) {
-  const { calenderDates } = useCalender();
-  const { setMode } = useContext(AppContext);
+export default function ScheduleCalender({ setDate, date }: IProps) {
+  const { calenderDates, m, y } = useCalender();
+  const { mode, setMode, currentPreset } = useContext(AppContext);
+  const [isVisible, setIsVisible] = useState<boolean>(false);
   return (
     <ScheduleCalenderContainer>
+      {isVisible && <ApplyModal hide={() => setIsVisible(false)} date={date} />}
       <ScheduleCalenderHeader>
-        <Letter size="7xl">{dayjs().month() + 1}月</Letter>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <Letter size="7xl">{m + 1}月</Letter>
+          <div></div>
+        </div>
         <PresetContainer>
           <PresetArea>
             {/* {presetList.map((title) => (
@@ -52,10 +63,20 @@ export default function ScheduleCalender({ setDate }: IProps) {
           <ScheduleCalenderDay
             onClick={() => {
               if (!el.vaild) return;
-              setMode((prev) => ({ ...prev, ...{ left: "schedule" } }));
+
               setDate(
-                String(dayjs().month() + 1) + "月" + String(el.value) + "日"
+                String(y) +
+                  "年" +
+                  String(m + 1) +
+                  "月" +
+                  String(el.value) +
+                  "日"
               );
+              if (mode.right === "preset" && currentPreset) {
+                setIsVisible(true);
+              } else {
+                setMode((prev) => ({ ...prev, ...{ left: "schedule" } }));
+              }
             }}
             style={{
               margin: "0.125rem",
@@ -64,17 +85,68 @@ export default function ScheduleCalender({ setDate }: IProps) {
               borderRadius: "10%",
               color: el.color,
               cursor: el.vaild ? "pointer" : "auto",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
             }}
           >
             <Letter size={"xs"} m={"0.125rem"} style={{}}>
               {el.value}
             </Letter>
+            {el.backgroundColor != "white" && (
+              <Letter size="xs" style={{ textAlign: "center" }}>
+                {el.backgroundColor === "violet" ? "プリセット" : "完了"}
+              </Letter>
+            )}
           </ScheduleCalenderDay>
         ))}
       </ScheduelCalenderBody>
     </ScheduleCalenderContainer>
   );
 }
+
+const ApplyModal = ({ hide, date }: { hide: () => void; date: string }) => {
+  const { setMonthSchedules, currentPreset } = useContext(AppContext);
+  const applyPreset = () => {
+    const presetSchedules = JSON.parse(
+      window.api.readPreset(currentPreset)
+    ).schedules;
+    const newObj: any = {};
+    newObj[date] = presetSchedules;
+    setMonthSchedules((prev) => ({
+      ...prev,
+      ...newObj,
+    }));
+    hide();
+  };
+  return (
+    <Modal qs="#root" hide={hide}>
+      <Modal.Header>
+        「{currentPreset}」 プリセットを適応するってこど…？
+      </Modal.Header>
+      <Modal.Footer>
+        <Button
+          onClick={applyPreset}
+          color="blue"
+          style={{
+            padding: 0,
+            height: "fit-content",
+            width: "80px",
+          }}
+        >
+          <Letter size="xs">ル！</Letter>
+        </Button>
+        <Button
+          color="red"
+          onClick={hide}
+          style={{ padding: 0, height: "fit-content", width: "80px" }}
+        >
+          <Letter size="xs">フ！</Letter>
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+};
 
 const ScheduleCalenderContainer = styled.div`
   border-radius: 0.375rem;

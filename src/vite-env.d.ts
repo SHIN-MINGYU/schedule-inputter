@@ -6,13 +6,23 @@ interface Window {
     updatePreset: (preset: string) => void;
     deletePreset: (title: string) => void;
     loadPresetList: () => string[];
-    readPreset: ([title, getPreset]: [
-      title: string,
-      getPreset: () => void
-    ]) => void;
+    readPreset: (title: string) => string;
+    saveData: (monthSchedule: string) => void;
+    loadData: () => string;
   };
 
   dialog: {
     showDialog: (message: string) => void;
   };
+  electron: {
+    ignoreMouseEvents: () => void;
+    noIgnoreMouseEvents: () => void;
+    closeWindow: () => void;
+    minimalizeWindow: () => void;
+  };
+}
+
+interface String {
+  getBlankCountForGmail: () => number;
+  addBlank: (count: number) => string;
 }

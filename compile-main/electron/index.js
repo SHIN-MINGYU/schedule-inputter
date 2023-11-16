@@ -20,9 +20,7 @@ var event_1 = require("./event");
 dotenv.config();
 var mainWindow = null;
 var createWindow = function () {
-    mainWindow = new electron_1.BrowserWindow(__assign(__assign({}, config_1.windowOption), { 
-        // titleBarStyle: "hidden",
-        webPreferences: {
+    mainWindow = new electron_1.BrowserWindow(__assign(__assign({}, config_1.windowOption), { titleBarStyle: "hidden", maximizable: false, webPreferences: {
             devTools: isDev,
             nodeIntegration: true,
             preload: path.join(__dirname, "preload.js"),
@@ -34,6 +32,10 @@ var createWindow = function () {
     else {
         mainWindow.loadFile(path.join(__dirname, "../../dist/index.html"));
     }
+    (0, event_1.registPresetEventes)();
+    (0, event_1.registDialogEvent)(mainWindow);
+    (0, event_1.registWindowsEvent)(mainWindow);
+    (0, event_1.registSaveEvent)();
 };
 electron_1.app.whenReady().then(function () {
     createWindow();
@@ -46,5 +48,3 @@ electron_1.app.on("window-all-closed", function () {
     if (process.platform !== "darwin")
         electron_1.app.quit();
 });
-(0, event_1.registPresetEventes)();
-(0, event_1.registDialogEvent)(mainWindow);
