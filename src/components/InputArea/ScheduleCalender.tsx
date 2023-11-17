@@ -125,8 +125,13 @@ export default function ScheduleCalender() {
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
-              backgroundImage: "url(../../../public/chiikawa_kya.png)",
-              backgroundSize: "contain",
+              backgroundImage: el.vaild
+                ? `url(../../../public/hachiware${
+                    el.value > 20 ? el.value - 20 : el.value
+                  }.png)`
+                : "",
+              backgroundSize: "50%",
+              backgroundPosition: "100% 100%",
               backgroundRepeat: "no-repeat",
             }}
           >

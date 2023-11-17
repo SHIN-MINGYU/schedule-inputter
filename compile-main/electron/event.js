@@ -66,7 +66,6 @@ exports.registWindowsEvent = registWindowsEvent;
 var registSaveEvent = function () {
     electron_1.ipcMain.on("save-data", function (e, data) {
         createFolder("save");
-        console.log(data);
         fs.writeFileSync(electron_1.app.getPath("userData") + "/save/auto_save.json", data);
     });
     electron_1.ipcMain.on("load-data", function (e) {
