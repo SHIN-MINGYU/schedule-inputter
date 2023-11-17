@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 export default function useSchedule() {
   const scheduleToText = (
     monthSchedules: IMonthSchdules,
+    date: string,
     ref: RefObject<HTMLTextAreaElement>
   ) => {
     let str = "";
@@ -23,6 +24,12 @@ export default function useSchedule() {
         return dayjs(tempA, "YYYY-MM-DD").diff(dayjs(tempB, "YYYY-MM-DD"));
       })
       .map((monthDate: string) => {
+        const currentYear = date ? date.split("年")[0] : dayjs().year();
+        const currentMonth = date
+          ? date.split("年")[1].split("月")[0]
+          : dayjs().month() + 1;
+        if (currentYear != monthDate.split("年")[0]) return;
+        if (currentMonth != monthDate.split("年")[1].split("月")[0]) return;
         temp += monthDate.split("月")[1];
 
         Object.keys(monthSchedules[monthDate]).map((hour: string) => {

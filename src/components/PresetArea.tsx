@@ -4,6 +4,7 @@ import { AppContext } from "../App";
 import styled from "styled-components";
 import { Letter } from "./common/TypoGraphy";
 import { FlexRowBox } from "./common/FlexBox";
+import RightArrowImgSrc from "../../public/right_arrow.png";
 
 export default function PresetArea() {
   const {
@@ -40,23 +41,33 @@ export default function PresetArea() {
     <>
       <FlexRowBox>
         <Button
-          style={{ width: "100%" }}
+          style={{
+            width: "100%",
+            padding: "0.65rem 0",
+            backgroundColor: "#EF53903B",
+          }}
+          color="transparents"
           mb="0.25rem"
           mr="0.25rem"
           onClick={() => setMode((prev) => ({ ...prev, left: "preset" }))}
         >
-          New
+          <Letter color="#EF5390">New</Letter>
         </Button>
         {!isDeleteMode && (
           <Button
             onClick={() => {
               setIsDeleteMode(true);
             }}
-            style={{ width: "100%" }}
+            style={{
+              width: "100%",
+              padding: "0.65rem 0",
+              backgroundColor: "#EF53903B",
+            }}
+            color="transparents"
             mb="0.25rem"
             ml="0.25rem"
           >
-            削除
+            <Letter color="#EF5390">削除</Letter>
           </Button>
         )}
         {isDeleteMode && (
@@ -64,34 +75,56 @@ export default function PresetArea() {
             onClick={() => {
               setIsDeleteMode(false);
             }}
-            style={{ width: "100%" }}
+            style={{
+              width: "100%",
+              padding: "0.65rem 0",
+              backgroundColor: "#EF5353D1",
+            }}
+            color="transparents"
             mb="0.25rem"
             ml="0.25rem"
-            color="red"
           >
-            X
+            <Letter color="#FF0000">X</Letter>
           </Button>
         )}
       </FlexRowBox>
 
       <RowDivider />
       <Letter>プリセットリスト</Letter>
-      {preset.map((name) => (
-        <FlexRowBox style={{ alignItems: "center" }}>
-          {name === currentPreset && <Letter weight="bold">→</Letter>}
-          <Button
-            style={{ width: "100%" }}
-            color={name === currentPreset ? "pink" : "black"}
-            onClick={() => {
-              !isDeleteMode && setCurrentPreset(name);
-              isDeleteMode && deletePreset(name);
+      <PresetButtonBox>
+        {preset.map((name) => (
+          <FlexRowBox
+            style={{
+              alignItems: "center",
+              overflow: "hidden",
+              padding: "0 1rem",
             }}
-            mt="0.25rem"
           >
-            {name}
-          </Button>
-        </FlexRowBox>
-      ))}
+            {name === currentPreset && (
+              <img
+                style={{ width: "16px", padding: "0 0.5rem" }}
+                src={RightArrowImgSrc}
+              ></img>
+            )}
+            <Button
+              style={{
+                width: "100%",
+                backgroundColor: `${
+                  name === currentPreset ? "#EF53903B" : "white"
+                }`,
+              }}
+              color={name === currentPreset ? "#EF5390" : "black"}
+              onClick={() => {
+                !isDeleteMode && setCurrentPreset(name);
+                isDeleteMode && deletePreset(name);
+              }}
+              mt="0.25rem"
+            >
+              {name}
+            </Button>
+          </FlexRowBox>
+        ))}
+      </PresetButtonBox>
     </>
   );
 }
@@ -99,4 +132,17 @@ export default function PresetArea() {
 const RowDivider = styled.span`
   border-bottom: 1px solid black;
   transform: scaleY(50%);
+`;
+
+const PresetButtonBox = styled.div`
+  width: 100%;
+  height: 88%;
+  overflow-y: scroll;
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 2px;
+    background: #ef5390;
+  }
 `;

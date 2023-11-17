@@ -18,7 +18,10 @@ import PresetArea from "./components/PresetArea";
 import "./utils/string.extention";
 import { Letter } from "./components/common/TypoGraphy";
 import useSchedule from "./hooks/useSchedule";
-import useInterval from "./hooks/useHook";
+import xButtonImg from "../public/pc_exit.png";
+import minButtonImg from "../public/pc_minimalize.png";
+import rightArrowImg from "../public/right_arrow.png";
+
 export const AppContext = createContext<{
   monthSchedules: IMonthSchdules;
   setMonthSchedules: Dispatch<SetStateAction<IMonthSchdules>>;
@@ -28,6 +31,8 @@ export const AppContext = createContext<{
   setIsPresetPending: Dispatch<SetStateAction<boolean>>;
   currentPreset: string;
   setCurrentPreset: Dispatch<SetStateAction<string>>;
+  date: string;
+  setDate: Dispatch<SetStateAction<string>>;
 }>({
   monthSchedules: {},
   setMonthSchedules: () => {},
@@ -37,6 +42,8 @@ export const AppContext = createContext<{
   setIsPresetPending: () => {},
   currentPreset: "",
   setCurrentPreset: () => {},
+  date: "",
+  setDate: () => {},
 });
 
 function App() {
@@ -44,6 +51,7 @@ function App() {
     left: "calender",
     right: "result",
   });
+  const [date, setDate] = useState<string>("");
   const [currentPreset, setCurrentPreset] = useState<string>("");
   const [monthSchedules, setMonthSchedules] = useState<IMonthSchdules>({});
   const [isPresetPending, setIsPresetPending] = useState<boolean>(false);
@@ -57,13 +65,18 @@ function App() {
   }, []);
 
   useEffect(() => {
-    saveMonthSchedule(monthSchedules);
+    console.log(date);
+  }, [date]);
+  useEffect(() => {
+    Object.keys(monthSchedules).length && saveMonthSchedule(monthSchedules);
 
     console.log("result : ", monthSchedules);
   }, [monthSchedules]);
   return (
     <AppContext.Provider
       value={{
+        date,
+        setDate,
         monthSchedules,
         setMonthSchedules,
         mode,
@@ -88,9 +101,9 @@ function App() {
           <AppTitleBarButtonWraper>
             <img
               onClick={window.electron.minimalizeWindow}
-              src="/pc_minimalize.png"
+              src={minButtonImg}
             ></img>
-            <img onClick={window.electron.closeWindow} src="/pc_exit.png"></img>
+            <img onClick={window.electron.closeWindow} src={xButtonImg}></img>
           </AppTitleBarButtonWraper>
         </AppTitleBarWrapper>
       </AppTitleBar>
@@ -104,16 +117,24 @@ function App() {
             width: "5%",
             display: "flex",
             alignItems: "center",
+            justifyContent: "center",
+            paddingLeft: "1rem",
           }}
         >
           {mode.left != "schedule" && mode.right === "result" && (
             <Button
               onClick={() => {
-                scheduleToText(monthSchedules, taRef);
+                console.log("Date", date);
+                scheduleToText(monthSchedules, date, taRef);
               }}
-              style={{ height: "2rem", lineHeight: "0px" }}
+              style={{
+                height: "2rem",
+                lineHeight: "0px",
+                color: "transparent",
+                backgroundColor: "#EF53903B",
+              }}
             >
-              →
+              <img style={{ width: "12px" }} src={rightArrowImg}></img>
             </Button>
           )}
         </div>
@@ -154,13 +175,16 @@ const AppContainer = styled.div`
   min-width: calc(100vw - 2rem);
   display: flex;
   padding: 1rem;
+  background-color: #ef539047;
 `;
 
 const AppInputArea = styled(FlexColBox)<{ mode: IMode }>`
   width: 67.5%;
+  user-select: none;
 `;
 
 const AppResultArea = styled(FlexColBox)<{ mode: IMode }>`
   width: ${(props) => (props.mode.left != "schedule" ? "27.5%" : "27.5%")};
   padding: 1rem;
+  height: calc(100vh - 4rem - 32px);
 `;

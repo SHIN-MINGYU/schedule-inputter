@@ -47,7 +47,7 @@
     "files": [
       "dist/**/*",
       "node_modules/**/*",
-      "electron/compile-main/**/*",
+      "compile-main/electron/**/*",
       "package.json"
     ],
     "directories": {

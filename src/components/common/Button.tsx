@@ -1,18 +1,20 @@
 import styled from "styled-components";
 
-export const Button = styled.button<{
+interface ButtonProps {
   m?: string;
   mt?: string;
   mb?: string;
   ml?: string;
   mr?: string;
   color?: string;
-}>`
-  color: ${(props) => props.color};
-  border: 1px solid ${(props) => props.color};
-  margin: ${(props) => props.m};
-  margin-top: ${(props) => props.mt};
-  margin-left: ${(props) => props.ml};
-  margin-right: ${(props) => props.mr};
-  margin-bottom: ${(props) => props.mb};
+}
+
+export const Button = styled.button<ButtonProps>`
+  color: ${({ color }) => color};
+  border: 1px solid ${({ color }) => color};
+  margin: ${({ m }) => m};
+  margin-top: ${({ mt }) => mt};
+  margin-left: ${({ ml }) => ml};
+  margin-right: ${({ mr }) => mr};
+  margin-bottom: ${({ mb }) => mb};
 `;

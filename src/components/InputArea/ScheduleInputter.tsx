@@ -20,12 +20,9 @@ import { AppContext } from "../../App";
 import Modal from "../common/Modal";
 import { Button } from "../common/Button";
 import dayjs from "dayjs";
-interface IProps {
-  date: string;
-}
 
-export default function ScheduleInputter({ date }: IProps) {
-  const { mode, setMode } = useContext(AppContext);
+export default function ScheduleInputter() {
+  const { mode, setMode, date } = useContext(AppContext);
   const { setMonthSchedules } = useContext(AppContext);
   const [visible, setVisible] = useState(false);
   const hide = () => {
@@ -49,7 +46,7 @@ export default function ScheduleInputter({ date }: IProps) {
     <>
       {visible && <PresetModal schedules={schedules} hide={hide}></PresetModal>}
       <ScheduleInputterHeader>
-        <Letter size="7xl">
+        <Letter size="7xl" color="#EF5390">
           {mode.left === "preset" ? "NEW PRESET" : date}
         </Letter>
       </ScheduleInputterHeader>
@@ -60,6 +57,7 @@ export default function ScheduleInputter({ date }: IProps) {
           .map((el) => (
             <Letter
               size="md"
+              color="#EF5390"
               style={{
                 textAlign: "center",
                 marginLeft: el === "時間" ? "0rem" : "1.75rem",
@@ -75,21 +73,25 @@ export default function ScheduleInputter({ date }: IProps) {
           <Schedule setSchedules={setSchedules} date={date} time={i + 9} />
         ))}
       </ScheduleContainer>
-      <button
+      <Button
+        style={{ backgroundColor: "#EF53903B" }}
         onClick={() => {
           setMode((prev) => ({ ...prev, ...{ left: "calender" } }));
         }}
+        color="transparents"
       >
-        돌아가기
-      </button>
+        <Letter color="#EF5390">戻るってこと</Letter>
+      </Button>
 
       {mode.left === "preset" && (
-        <button
-          style={{ border: "1px solid blue" }}
+        <Button
+          ml="1rem"
+          style={{ backgroundColor: "#EF53903B" }}
           onClick={() => setVisible(true)}
+          color="transparents"
         >
-          저장
-        </button>
+          <Letter color="#EF5390">保存するってこと</Letter>
+        </Button>
       )}
     </>
   );
@@ -237,6 +239,7 @@ const PresetModal = ({
         };
       }
     });
+
     const preset: IPreset = {
       title: title.value,
       schedules: presetSchedules,
@@ -260,7 +263,7 @@ const PresetModal = ({
   return (
     <Modal hide={hide} qs="#root">
       <Modal.Header>
-        <Letter>タイトルを入力するってこと…？</Letter>
+        <Letter color="#EF5390">タイトルを入力するってこと…？</Letter>
         <Letter
           style={{ cursor: "pointer" }}
           onClick={hide}
@@ -285,15 +288,17 @@ const PresetModal = ({
       <Modal.Footer>
         <Button
           onClick={onSubmitPreset}
+          color="blue"
           style={{ padding: 0, height: "fit-content", width: "80px" }}
         >
-          <Letter size="xs">Save</Letter>
+          <Letter size="xs">ル！</Letter>
         </Button>
         <Button
           onClick={hide}
+          color="red"
           style={{ padding: 0, height: "fit-content", width: "80px" }}
         >
-          <Letter size="xs">Cancle</Letter>
+          <Letter size="xs">フ！</Letter>
         </Button>
       </Modal.Footer>
     </Modal>
@@ -321,7 +326,7 @@ const ScheduleContainer = styled.div`
 `;
 
 const ScheduleInput = styled.div`
-  margin: 0.75rem;
+  margin: 1.5rem 1.25rem;
   display: flex;
   flex-direction: rows;
 
@@ -360,6 +365,7 @@ const ScheduleLessonType = styled.div<{
     ${(props) =>
       props.currentLessonType === props.type ? "#0000CD" : "#B0C4DE"};
   cursor: pointer;
+  background-color: white;
 `;
 
 const ScheduleLessonPeople = styled(FlexRowBox)`

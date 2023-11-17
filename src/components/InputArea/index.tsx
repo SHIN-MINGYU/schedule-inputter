@@ -1,13 +1,11 @@
 import styled from "styled-components";
-// import usePreset from "../../hooks/usePreset";
 import ScheduleCalender from "./ScheduleCalender";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import ScheduleInputter from "./ScheduleInputter";
 import { AppContext } from "../../App";
 
 export default function InputArea() {
-  const { mode } = useContext(AppContext);
-  const [date, setDate] = useState<string>("");
+  const { mode, setDate } = useContext(AppContext);
 
   useEffect(() => {
     if (mode.left === "preset") setDate("");
@@ -17,12 +15,12 @@ export default function InputArea() {
     <>
       {mode.left === "calender" && (
         <ScheduleCalenderArea>
-          <ScheduleCalender date={date} setDate={setDate}></ScheduleCalender>
+          <ScheduleCalender></ScheduleCalender>
         </ScheduleCalenderArea>
       )}
       {(mode.left === "schedule" || mode.left === "preset") && (
         <ScheduleArea>
-          <ScheduleInputter date={date}></ScheduleInputter>
+          <ScheduleInputter></ScheduleInputter>
         </ScheduleArea>
       )}
     </>

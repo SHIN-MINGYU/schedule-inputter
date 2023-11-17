@@ -1,14 +1,37 @@
 import dayjs from "dayjs";
-import { useContext, useLayoutEffect, useMemo, useState } from "react";
+import {
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from "react";
 import type { ICalenderDate } from "../../types/calender.interface";
 import { AppContext } from "../App";
 
-export default function useCalender() {
-  const { monthSchedules } = useContext(AppContext);
-  const [y, setY] = useState(dayjs().year());
-  const [m, setM] = useState(dayjs().month());
+export default function useCalender(initDate?: string) {
+  console.log(initDate);
+  const { monthSchedules, setDate } = useContext(AppContext);
+  const [y, setY] = useState(
+    initDate ? parseInt(initDate.split("年")[0]) : dayjs().year()
+  );
+  const [m, setM] = useState(
+    initDate
+      ? parseInt(initDate.split("年")[1].split("月")[0]) - 1
+      : dayjs().month()
+  );
   // constant
-  const startDay = useMemo(() => dayjs().set("date", 1).day(), []);
+  const startDay = useMemo(
+    () =>
+      dayjs(`${y}-${m + 1}-1`)
+        .set("date", 1)
+        .day(),
+    [y, m]
+  );
+
+  useEffect(() => {
+    setDate(`${y}年${m + 1}月1日`);
+  }, [y, m]);
 
   const DATE_OF_MONTH: { [key: number]: number } = useMemo(
     () => [
@@ -44,7 +67,7 @@ export default function useCalender() {
       .map((_, i) => {
         idx++;
         return {
-          value: DATE_OF_MONTH[m - 1] - i,
+          value: DATE_OF_MONTH[m] - i,
           backgroundColor: "white",
           color: "#D0D0D0",
           vaild: false,

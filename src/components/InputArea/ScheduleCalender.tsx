@@ -9,18 +9,18 @@ import { Button } from "../common/Button";
 import { AppContext } from "../../App";
 import Modal from "../common/Modal";
 
-interface IProps {
-  setDate: Dispatch<SetStateAction<string>>;
-  date: string;
-}
+import DownArrowImg from "../../../public/down_arrow.png";
+import UpArrowImg from "../../../public/up_arrow.png";
 
-export default function ScheduleCalender({ setDate, date }: IProps) {
-  const { calenderDates, m, y } = useCalender();
-  const { mode, setMode, currentPreset } = useContext(AppContext);
+export default function ScheduleCalender() {
+  const { mode, setMode, currentPreset, date, setDate } =
+    useContext(AppContext);
+
+  const { calenderDates, m, y, goNextMonth, goPrevMonth } = useCalender(date);
   const [isVisible, setIsVisible] = useState<boolean>(false);
   return (
     <ScheduleCalenderContainer>
-      {isVisible && <ApplyModal hide={() => setIsVisible(false)} date={date} />}
+      {isVisible && <ApplyModal hide={() => setIsVisible(false)} />}
       <ScheduleCalenderHeader>
         <div
           style={{
@@ -28,8 +28,40 @@ export default function ScheduleCalender({ setDate, date }: IProps) {
             alignItems: "center",
           }}
         >
-          <Letter size="7xl">{m + 1}月</Letter>
-          <div></div>
+          <div
+            style={{
+              marginRight: "1rem",
+            }}
+          >
+            <Letter color="#EF5390" size="xs">
+              {y}年
+            </Letter>
+            <Letter
+              style={{
+                color: "#EF5390",
+              }}
+              size="7xl"
+            >
+              {m + 1}月
+            </Letter>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <img
+              onClick={goNextMonth}
+              style={{ width: "32px", height: "32px", cursor: "pointer" }}
+              src={UpArrowImg}
+            ></img>
+            <img
+              onClick={goPrevMonth}
+              style={{ width: "32px", height: "32px", cursor: "pointer" }}
+              src={DownArrowImg}
+            ></img>
+          </div>
         </div>
         <PresetContainer>
           <PresetArea>
@@ -43,9 +75,14 @@ export default function ScheduleCalender({ setDate, date }: IProps) {
                   ...{ right: prev.right === "preset" ? "result" : "preset" },
                 }))
               }
-              style={{ padding: "0.25rem 0.75rem", margin: 0 }}
+              color="transparents"
+              style={{
+                padding: "0.25rem 0.75rem",
+                margin: 0,
+                backgroundColor: "#EF53903B",
+              }}
             >
-              プリセット
+              <Letter color="#EF5390">プリセット</Letter>
             </Button>
           </PresetArea>
         </PresetContainer>
@@ -53,7 +90,7 @@ export default function ScheduleCalender({ setDate, date }: IProps) {
       <ScheduelCalenderBody>
         {Object.keys(day_of_a_week).map((day: string) => (
           <ScheduleCalenderDay
-            style={{ marginBottom: "0.125rem" }}
+            style={{ marginBottom: "0.125rem", backgroundColor: "white" }}
             color={(day_of_a_week as any)[day]}
           >
             <Letter>{day}</Letter>
@@ -88,6 +125,9 @@ export default function ScheduleCalender({ setDate, date }: IProps) {
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
+              backgroundImage: "url(../../../public/chiikawa_kya.png)",
+              backgroundSize: "contain",
+              backgroundRepeat: "no-repeat",
             }}
           >
             <Letter size={"xs"} m={"0.125rem"} style={{}}>
@@ -105,8 +145,8 @@ export default function ScheduleCalender({ setDate, date }: IProps) {
   );
 }
 
-const ApplyModal = ({ hide, date }: { hide: () => void; date: string }) => {
-  const { setMonthSchedules, currentPreset } = useContext(AppContext);
+const ApplyModal = ({ hide }: { hide: () => void }) => {
+  const { setMonthSchedules, currentPreset, date } = useContext(AppContext);
   const applyPreset = () => {
     const presetSchedules = JSON.parse(
       window.api.readPreset(currentPreset)
@@ -159,13 +199,14 @@ const ScheduleCalenderHeader = styled(FlexRowBox)`
   justify-content: space-between;
   width: 100%;
   align-items: end;
+  margin-bottom: 0.5rem;
 `;
 
 const ScheduelCalenderBody = styled(FlexRowBox)`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   grid-template-rows: 40px repeat(6, 1fr);
-  height: 90%;
+  height: 85%;
 `;
 
 const ScheduleCalenderDay = styled.div<{ bgColor?: string }>`

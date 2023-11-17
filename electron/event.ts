@@ -84,7 +84,6 @@ export const registWindowsEvent = (mainBrowser: BrowserWindow) => {
 export const registSaveEvent = () => {
   ipcMain.on("save-data", (e, data: string) => {
     createFolder("save");
-    console.log(data);
     fs.writeFileSync(app.getPath("userData") + "/save/auto_save.json", data);
   });
 
